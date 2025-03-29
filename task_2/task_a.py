@@ -2,12 +2,13 @@ from config import *
 from dataloader import load_audio_files
 from feature_extraction import extract_mfcc
 from visualization import plot_mfcc_spectrogram
-from stat import create_feature_dataframe, compute_language_stats
+from stats import create_feature_dataframe, compute_language_stats
 import os
 
 os.makedirs(PLOT_PATH, exist_ok=True)
 
 audio_files, labels = load_audio_files(DATASET_PATH, LANGUAGES)
+# print(f"Loaded {len(audio_files)} audio files from {len(LANGUAGES)} languages.")
 
 # Task A: Visualization
 for i, file_path in enumerate(audio_files[:3*len(LANGUAGES)]):  

@@ -1,4 +1,4 @@
-DATASET_PATH = "path/to/dataset"  
+DATASET_PATH = "/data/b22cs089/speech_PA2/task_2/"  
 LANGUAGES = ["hindi", "tamil", "gujarati"]  
 N_MFCC = 13
 HOP_LENGTH = 512
