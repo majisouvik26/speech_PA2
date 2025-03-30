@@ -15,9 +15,9 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     base_model = load_model(device)
     model = apply_lora(base_model)
-    if torch.cuda.device_count() > 1:
-        print(f"Using {torch.cuda.device_count()} GPUs.")
-        model = torch.nn.DataParallel(model, device_ids=[0])
+    # if torch.cuda.device_count() > 1:
+    #     print(f"Using {torch.cuda.device_count()} GPUs.")
+    #     model = torch.nn.DataParallel(model, device_ids=[0])
     model.to(device)
 
     txt_root = "../datasets/vox2/txt" 
@@ -26,7 +26,7 @@ def main():
     train_identities = all_identities[:100]
     test_identities = all_identities[100:118]
     train_dataset = VoxCeleb2TxtDataset(txt_root, aac_root, train_identities)
-    batch_size = 32
+    batch_size = 128
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, collate_fn=collate_fn)
     label_map = {identity: idx for idx, identity in enumerate(sorted(train_identities))}
 
@@ -35,8 +35,8 @@ def main():
     num_classes = len(train_identities)
     classifier = nn.Linear(embedding_dim, num_classes).to(device)
 
-    if torch.cuda.device_count() > 1:
-        classifier = torch.nn.DataParallel(classifier, device_ids=[0, 1, 2])
+    # if torch.cuda.device_count() > 1:
+    #     classifier = torch.nn.DataParallel(classifier, device_ids=[0, 1, 2])
     classifier.to(device)
 
     num_epochs = 10
