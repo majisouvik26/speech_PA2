@@ -1,6 +1,6 @@
 from config import *
 from dataloader import load_audio_files
-from stat import create_feature_dataframe
+from stats import create_feature_dataframe
 from model import prepare_data, train_and_evaluate
 
 # load and extract features
