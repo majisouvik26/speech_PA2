@@ -4,12 +4,11 @@ import torch.nn as nn
 class ArcFaceLoss(nn.Module):
     def __init__(self, s=30.0, m=0.5):
         super(ArcFaceLoss, self).__init__()
-        self.s = s  # Scale factor
-        self.m = m  # Angular margin
+        self.s = s
+        self.m = m
         self.ce = nn.CrossEntropyLoss()
     
     def forward(self, logits, labels):
-        # Clamp logits to avoid numerical issues with acos
         logits = torch.clamp(logits, -1.0 + 1e-7, 1.0 - 1e-7)
         theta = torch.acos(logits)
         target_logits = torch.cos(theta + self.m)
@@ -19,4 +18,3 @@ class ArcFaceLoss(nn.Module):
         output *= self.s
         loss = self.ce(output, labels)
         return loss
-

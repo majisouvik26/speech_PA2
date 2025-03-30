@@ -4,14 +4,15 @@ import torch
 
 def load_model(device):
     """
-    Loads the pretrained WavLM model.
+    Loads the pre-trained WavLM model.
     """
     model = WavLMModel.from_pretrained("microsoft/wavlm-base-plus").to(device)
+    # model.gradient_checkpointing_enable()
     return model
 
 def apply_lora(model):
     """
-    Applies LoRA to the specified attention projection modules.
+    Applies LoRA to target modules in the model.
     """
     lora_config = LoraConfig(
         r=16,
@@ -20,4 +21,3 @@ def apply_lora(model):
     )
     model = get_peft_model(model, lora_config)
     return model
-

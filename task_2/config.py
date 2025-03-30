@@ -1,5 +1,5 @@
 DATASET_PATH = "/data/b22cs089/speech_PA2/task_2/"  
-LANGUAGES = ["hindi", "bengali", "tamil"]  
+LANGUAGES = ["hindi", "bengali", "tamil", "marathi", "malayalam", "telugu", "kannada", "urdu", "punjabi", "gujarati"]  
 # LANGUAGES = ["hindi"] 
 N_MFCC = 13
 HOP_LENGTH = 512
