@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader
 from transformers import WavLMModel
 from data import VoxCeleb1Dataset, collate_fn
 
+# Set device and load the WavLM model.
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = WavLMModel.from_pretrained("microsoft/wavlm-base-plus").to(device)
 model.eval()
@@ -35,13 +36,9 @@ def extract_embedding_from_path(audio_path):
     return embedding
 
 def evaluate_verification(trial_pairs_file):
-    """
-    Evaluates verification performance using a trial pairs file.
-    Computes Equal Error Rate (EER) and TAR@1%FAR.
-    """
     if not os.path.exists(trial_pairs_file):
         print(f"Trial pairs file not found: {trial_pairs_file}")
-        return
+        return ""
     
     with open(trial_pairs_file, "r") as f:
         trial_pairs = [line.strip().split() for line in f if line.strip()]
@@ -79,12 +76,13 @@ def evaluate_verification(trial_pairs_file):
     tar_index = np.argmin(np.abs(fpr - 0.01))
     tar_at_far = tpr[tar_index]
     
-    result_str = f"EER: {eer * 100:.2f}%\nTAR@1%FAR: {tar_at_far * 100:.2f}%\n"
-    print(result_str)
-    output_file = "./evaluation_results.txt"
-    with open(output_file, "w") as f:
-        f.write(result_str)
-    print(f"Verification results saved to {output_file}")
+    verification_results = (
+        "Verification Results:\n"
+        f"EER: {eer * 100:.2f}%\n"
+        f"TAR@1%FAR: {tar_at_far * 100:.2f}%\n"
+    )
+    print(verification_results)
+    return verification_results
 
 ############################################
 # Speaker Identification Evaluation Section
@@ -113,24 +111,31 @@ def evaluate_speaker_identification(dataset, batch_size=32):
     correct = sum([pred == true for pred, true in zip(predicted_labels, all_labels)])
     rank1_accuracy = correct / len(all_labels)
     
-    print(f"Speaker Identification Rank‑1 Accuracy: {rank1_accuracy * 100:.2f}%")
-    return rank1_accuracy
+    identification_results = f"Speaker Identification Rank‑1 Accuracy: {rank1_accuracy * 100:.2f}%\n"
+    print(identification_results)
+    return identification_results
 
 ######################
 # Main Entry Function
 ######################
 def main():
-    # --- Verification Evaluation using VoxCeleb1 trial pairs ---
+    combined_results = ""
     trial_pairs_file = "/data/b22cs089/speech_PA2/task_1/datasets/vox1/veri_test2.txt"
-    evaluate_verification(trial_pairs_file)
+    verification_result = evaluate_verification(trial_pairs_file)
+    combined_results += verification_result + "\n"
     
-    # --- Speaker Identification Evaluation using VoxCeleb1 dataset ---
-    dataset_root = "./datasets/vox1/wav"  # Adjust this path as needed.
-    allowed_identities = None  # Set to a list of speaker IDs if you want to filter.
+    dataset_root = "./datasets/vox1/wav"
+    allowed_identities = None 
     dataset = VoxCeleb1Dataset(dataset_root, desired_length=3 * 16000, target_sample_rate=16000, allowed_identities=allowed_identities)
     print(f"Speaker Identification Dataset contains {len(dataset)} samples.")
     
-    evaluate_speaker_identification(dataset)
+    identification_result = evaluate_speaker_identification(dataset)
+    combined_results += identification_result + "\n"
+    
+    output_file = "evaluation_results.txt"
+    with open(output_file, "w") as f:
+        f.write(combined_results)
+    print(f"Combined results saved to {output_file}")
 
 if __name__ == "__main__":
     main()
