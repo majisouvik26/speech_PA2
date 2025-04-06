@@ -1,3 +1,4 @@
 EER: 36.73%
 TAR@1%FAR: 7.39%
 Speaker Identification Rank‑1 Accuracy: 36.11%
+Verification Accuracy : 66.37%

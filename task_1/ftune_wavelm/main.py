@@ -40,7 +40,7 @@ def main():
     classifier.to(device)
 
     num_epochs = 10
-    learning_rate = 5e-5
+    learning_rate = 1e-4
 
     train_model(model, classifier, train_loader, num_epochs, learning_rate, device, label_map)
 
