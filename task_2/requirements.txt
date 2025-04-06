@@ -4,6 +4,7 @@ pandas
 matplotlib
 scikit-learn
 numba>=0.57.0
+torchaudio
 
 ## python 3.11.11
 ## pytroch 2,3.1
